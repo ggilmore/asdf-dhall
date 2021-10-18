@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 #;
 # get_download_urls()
 # get download urls from releases page of dhall-lang/dhall-haskell
@@ -8,11 +10,11 @@
 # @return multiline urls
 #"
 get_download_urls() {
-  curl -fL "https://api.github.com/repos/dhall-lang/dhall-haskell/releases/tags/$1" \
-  | grep download_url                                                               \
-  | grep "$2"                                                                       \
+  "$(dirname "${BASH_SOURCE[0]}")"/curl-with-headers -fL "https://api.github.com/repos/dhall-lang/dhall-haskell/releases/tags/$1" \
+  | grep download_url                                                                                                             \
+  | grep "$2"                                                                                                                     \
   | cut -d: -f2-
 }
 
 [ "$(uname)" = Darwin ] && os_arch=macos || os_arch=linux
-get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" | xargs -P"$ASDF_CONCURRENCY" -I{} sh -c "curl -fL {} | tar jx -C $ASDF_INSTALL_PATH"
+get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" | xargs -P"$ASDF_CONCURRENCY" -I{} bash -c "$(dirname "${BASH_SOURCE[0]}")/curl-with-headers -fL {} | tar jx -C $ASDF_INSTALL_PATH"

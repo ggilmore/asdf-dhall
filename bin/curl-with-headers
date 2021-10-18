@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail 
+
+CURL_HEADERS=()
+if  [[ -v GITHUB_TOKEN ]]; then 
+  CURL_HEADERS+=("-H" "Authorization: token ${GITHUB_TOKEN}")
+fi 
+
+curl "${CURL_HEADERS[@]}" "$@"
